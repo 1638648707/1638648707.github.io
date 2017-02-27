@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<title>伯镭智能科技</title>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+		<style>
+			body {
+				font-family: Monospace;
+				background-color: #000000;
+				margin: 0px;
+				overflow: hidden;
+			}
+		</style>
+	</head>
+	<body>
+		<script src="http://www.boonray.com/3dvideo/3d/js/three.js"></script>
+		<script src="http://www.boonray.com/3dvideo/3d/js/OBJLoader.js"></script>
+		<script src="http://www.boonray.com/3dvideo/3d/js/Detector.js"></script>
+		<script src="http://www.boonray.com/3dvideo/3d/js/OrbitControls.js"></script>	
+		<script src="http://www.boonray.com/3dvideo/3d/js/jszip.min.js"></script>
+		<script>
+			if ( ! Detector.webgl ) Detector.addGetWebGLMessage();			
+			var camera, scene, renderer;
+			init();			
+			function init() {
+				//创建场景
+				scene = new THREE.Scene();
+				//创建光效果：
+				scene.add( new THREE.AmbientLight( 0x999999 ) );
+				var pointLight = new THREE.PointLight( 0x999999, 0.6 );
+				pointLight.position.set( 80, 90, 150 );
+				scene.add( pointLight );
+				//创建照相机：透视照相机，调节near：far比例可以产生视觉上的拉远
+				camera = new THREE.PerspectiveCamera( 45, window.innerWidth / window.innerHeight, 1, 10000 );
+				camera.up.set( 0, 0, 1 );
+				camera.position.set( 0, 0, 700 );
+				//camera.lookAt(0,0,0);
+				camera.add( new THREE.PointLight( 0x999999, 1 ) );
+				scene.add( camera );
+				//创建渲染器
+				renderer = new THREE.WebGLRenderer( { antialias: true } );
+				renderer.setClearColor( 0x000000 );
+				renderer.setPixelRatio( window.devicePixelRatio );
+				renderer.setSize( window.innerWidth, window.innerHeight );
+				document.body.appendChild( renderer.domElement );				
+				//加载器，先创建3个参数
+				var manager = new THREE.LoadingManager();
+				manager.onProgress = function ( item, loaded, total ) {
+					console.log( item, loaded, total );
+				};			
+				var texture=new THREE.Texture();
+				var onProgress = function ( xhr ) {
+					if ( xhr.lengthComputable ) {
+						var percentComplete = xhr.loaded / xhr.total * 100;
+						console.log( Math.round(percentComplete, 2) + '% downloaded' );
+					}
+				};
+				var onError = function ( xhr ) {
+				};
+				var loader = new THREE.ImageLoader( manager );
+				//加载纹理
+				loader.load( 'http://www.boonray.com/3dvideo/3d/obj/SongJiangBieShu/songjiang_texture.jpg', function ( image ) {
+					texture.image = image;
+					texture.needsUpdate = true;
+				} );				
+				//加载外部文件
+				var loader = new THREE.OBJLoader( manager );
+				loader.load( 'http://www.boonray.com/3dvideo/3d/obj/SongJiangBieShu/songjiang_simplified_3d_mesh.obj', function ( object ) {
+				object.traverse( function ( child ) {
+						object.scale.set(0.8,0.8,0.8)
+						if ( child instanceof THREE.Mesh ) {
+							child.material.map = texture
+						}
+					} );
+					scene.add( object );
+					render();
+				}, onProgress, onError );
+				var controls = new THREE.OrbitControls( camera, renderer.domElement );
+				controls.addEventListener( 'change', render );
+				controls.target.set( 0, 1, 0 );
+				controls.update();
+				window.addEventListener( 'resize', onWindowResize, false );
+			}
+			//窗口恢复
+			function onWindowResize() {
+				camera.aspect = window.innerWidth / window.innerHeight;
+				camera.updateProjectionMatrix();
+				renderer.setSize( window.innerWidth, window.innerHeight );
+				render();
+			}
+			//执行渲染
+			function render() {
+				renderer.render( scene, camera );
+			}
+		</script>
+	</body>
+</html>
