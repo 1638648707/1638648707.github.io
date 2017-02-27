@@ -14,11 +14,11 @@
 		</style>
 	</head>
 	<body>
-		<script src="http://www.boonray.com/3dvideo/3d/js/three.js"></script>
-		<script src="http://www.boonray.com/3dvideo/3d/js/OBJLoader.js"></script>
-		<script src="http://www.boonray.com/3dvideo/3d/js/Detector.js"></script>
-		<script src="http://www.boonray.com/3dvideo/3d/js/OrbitControls.js"></script>	
-		<script src="http://www.boonray.com/3dvideo/3d/js/jszip.min.js"></script>
+		<script src="js/three.js"></script>
+		<script src="js/OBJLoader.js"></script>
+		<script src="js/Detector.js"></script>
+		<script src="js/OrbitControls.js"></script>	
+		<script src="js/jszip.min.js"></script>
 		<script>
 			if ( ! Detector.webgl ) Detector.addGetWebGLMessage();			
 			var camera, scene, renderer;
@@ -60,13 +60,13 @@
 				};
 				var loader = new THREE.ImageLoader( manager );
 				//加载纹理
-				loader.load( 'http://www.boonray.com/3dvideo/3d/obj/SongJiangBieShu/songjiang_texture.jpg', function ( image ) {
+				loader.load( 'obj/SongJiangBieShu/songjiang_texture.jpg', function ( image ) {
 					texture.image = image;
 					texture.needsUpdate = true;
 				} );				
 				//加载外部文件
 				var loader = new THREE.OBJLoader( manager );
-				loader.load( 'http://www.boonray.com/3dvideo/3d/obj/SongJiangBieShu/songjiang_simplified_3d_mesh.obj', function ( object ) {
+				loader.load( 'obj/SongJiangBieShu/songjiang_simplified_3d_mesh.obj', function ( object ) {
 				object.traverse( function ( child ) {
 						object.scale.set(0.8,0.8,0.8)
 						if ( child instanceof THREE.Mesh ) {
